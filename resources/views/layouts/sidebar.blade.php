@@ -14,7 +14,7 @@
           <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Alexander Pierce</a>
+          <a href="#" class="d-block"> {{Auth::user()->name}} </a>
         </div>
       </div>
 
@@ -35,8 +35,10 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
+          @if (Auth::user()->roles->pluck('name')[0] === 'superadmin')
+
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link active">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Roles
@@ -45,17 +47,33 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{{route('roleIndex')}}" class="nav-link active">
+                <a href="{{route('roleIndex')}}" class="nav-link ">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Roles</p>
                 </a>
               </li>
+
+            </ul>
+          </li>
+
+          @endif
+
+          <li class="nav-item menu-open">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                User Management
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{{route('roleCreate')}}" class="nav-link">
+                <a href="{{route('userIndex')}}" class="nav-link ">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Roles Create</p>
+                  <p>Users</p>
                 </a>
               </li>
+
             </ul>
           </li>
           {{-- <li class="nav-item">
