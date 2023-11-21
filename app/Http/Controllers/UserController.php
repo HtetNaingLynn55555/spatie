@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -24,6 +25,11 @@ class UserController extends Controller
      */
     public function create()
     {
+        if( Auth::user()->roles->pluck('name')[0] !== 'superadmin' )
+        {
+            abort(404);
+        }
+
         $roles = Role::pluck( 'name' )->all();
 
         return view( 'user.create', compact( 'roles' ));
@@ -34,6 +40,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        if( Auth::user()->roles->pluck('name')[0] !== 'superadmin' )
+        {
+            abort(404);
+        }
+
         $inputs = $request->all();
         $inputs['password'] = Hash::make( $request->input( 'password' ) );
 
@@ -59,6 +70,11 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
+        if( Auth::user()->roles->pluck('name')[0] !== 'superadmin' )
+        {
+            abort(404);
+        }
+
         $user = User::find($id);
         $roles = Role::pluck( 'name' )->all();
         $userRoles = $user->roles->pluck('name');
@@ -71,7 +87,10 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
+        if( Auth::user()->roles->pluck('name')[0] !== 'superadmin' )
+        {
+            abort(404);
+        }
 
         $inputs = $request->all();
 
@@ -102,8 +121,14 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        User::findOrFail($id)->delete();
+        if( Auth::user()->roles->pluck('name')[0] === 'superadmin' || Auth::user()->roles->pluck('name')[0] === 'admin' )
+        {
+            User::findOrFail($id)->delete();
 
-        return redirect()->route('userIndex');
+            return redirect()->route('userIndex');
+
+        }
+
+        abort(403);
     }
 }
